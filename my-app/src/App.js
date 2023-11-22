@@ -1,6 +1,8 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {TextField, ListItemButton } from '@mui/material';
-import { Button, Container } from 'react-bootstrap';
+import DeleteIcon from '@mui/icons-material/Delete';
+import IconButton from '@mui/material/IconButton';
+import { TextField, Button, Checkbox, FormControlLabel, List, ListItem, ListItemText } from '@mui/material';
+import { Container } from 'react-bootstrap';
 import './App.css';
 import React, { useState } from "react";
 
@@ -33,7 +35,6 @@ function App() {
   };
 
   const clickhandler = (value) => {
-    debugger
     todoList.forEach(item => {
       if (item.id === value.id) {
         if (!value.complete) {
@@ -57,35 +58,45 @@ function App() {
     })
   }
 
+  const deleteAll = () => {
+    setTodoList([]);
+  }
+
   return (
-    <Container style={{
-      position: 'absolute', left: '50%', top: '50%',
-      transform: 'translate(-50%, -50%)'
-    }}>
+    <Container>
       <div>
-        <p>Today's Date</p>
-        <p>{currentDate}</p>
+        <p>Today's Date:  <b>{currentDate}</b></p>
       </div>
       <div>
-        <TextField style={{ width: 400, paddingRight: 30 }} value={input} onInput={(e) => setInput(e.target.value)} id="standard-basic" label="To-Do" variant="standard" />
-        <Button style={{ width: 120, textAlign: "center", marginTop: 15 }} onClick={addDo} variant="outlined">Add</Button>
+        <TextField style={{ paddingRight: 30, width: 300 }} value={input} onInput={(e) => setInput(e.target.value)} id="standard-basic" label="To-Do" variant="standard" />
+        <Button style={{ marginTop: 15 }} onClick={addDo} variant="outlined">Add</Button>
+        <Button style={{ marginTop: 15 }} onClick={deleteAll} variant="outlined">Delete All</Button>
+
       </div>
       <div>
-        <ListItemButton component="a" href="#simple-list">
-          <ul>{
-            todoList.map((item) => (
-              <div>
-                <li style={styles} key={item.id}>{item.task} <input type="checkbox" onClick={() => clickhandler(item)} value={checked} />
-                  <Button style={{ width: 120, textAlign: "center", marginTop: 15 }} onClick={() => deleteDo(item)} variant="outlined">Delete</Button>
-                </li>
-              </div>
-            ))
-          }
-          </ul>
-        </ListItemButton>
+        <List sx={{ width: '100%', maxWidth: 360 }}>
+          {todoList.map((item) => (
+            <ListItem
+              key={item.id}
+              secondaryAction={
+                <IconButton aria-label="delete" onClick={() => deleteDo(item)}>
+                  <DeleteIcon />
+                </IconButton>
+              }
+            >
+              <ListItemText primary={`${item.task}`} />
+            </ListItem>
+          ))}
+        </List>
       </div>
     </Container>
   );
 }
 
 export default App;
+
+/*<FormControlLabel control={<Checkbox />} style={styles} label="Completed" onClick={() => clickhandler(item)} value={checked} />
+              <input type="checkbox" onClick={() => clickhandler(item)} value={checked} />
+               <Button onClick={() => deleteDo(item)} variant="outlined" color="secondary" size="small" startIcon={<DeleteIcon />}>Delete</Button>
+
+             */
