@@ -36,4 +36,37 @@
     transform: rotate(360deg);
   }
 }
+.lineOver {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+          line-clamp: 3; 
+  -webkit-box-orient: vertical;
+}
 
+.todoText {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.todoDiv {
+  margin-left: 10;
+  display: inline;
+}
+
+.cardStyle {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.deleteAllStyle {
+  margin-top: 15;
+   margin-left: auto; 
+}
+
+.iconBtnBox {
+  display:flex;
+  justify-content:flex-end;
+}
