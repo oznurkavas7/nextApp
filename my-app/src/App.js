@@ -6,16 +6,16 @@ import IconButton from '@mui/material/IconButton';
 import DoneIcon from '@mui/icons-material/Done';
 import { SketchPicker } from "react-color";
 import {
-  TextField, Button, CardContent, Card, Grid, Dialog, DialogContent, 
+  TextField, Button, CardContent, Card, Grid, Dialog, DialogContent,
   DialogActions, DialogContentText, Modal, Box, Typography, Tooltip, Paper
 } from '@mui/material';
 import { Container } from 'react-bootstrap';
 import './App.css';
-import { getDate, settingBox } from './controller';
+import {settingBox, getDate} from './TodoPanel';
 import React, { useState } from "react";
+import SaveIcon from '@mui/icons-material/Save';
 
 function App() {
-  const [checked, setChecked] = useState(false);
   const [input, setInput] = useState("");
   const [todoList, setTodoList] = useState([]);
   const [currentDate] = useState(getDate());
@@ -26,19 +26,11 @@ function App() {
     setTime(time)
   }
   setInterval(UpdateTime)
-  const [isDelBtnDisabled, setDelBtnDisabled] = useState(true);
-  const [isEditBtnDisabled, setEditBtnDisabled] = useState(null);
   const [open, setOpen] = useState(false);
-  const [openDel, setOpenDel] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const [openColorSett, setOpenColorSett] = useState(false);
+  const [color, setColor] = useState({r: "204", g: "204", b: "255", a: "0" });
+  const [containerColor, setContainerColor] = useState('#CCCCFF');
+  const [cardFldVal, setCardFld] = useState('');
 
   const addDo = () => {
     const id = todoList.length + 1;
@@ -51,28 +43,30 @@ function App() {
         editing: false
       },
     ]);
-    setDelBtnDisabled(false);
     setInput("");
-    setChecked(false);
-    setIsEditing(false);
     setCardFld(input);
   };
 
-  const clickhandler = (item, index) => {
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const clickHandler = (item, index) => {
     todoList.forEach(i => {
       if (item.id === i.id) {
         item.complete = !item.complete;
       }
-      setEditBtnDisabled(index);
     });
   }
 
   const deleteDo = (value) => {
     setTodoList(oldValues => {
-      setDelBtnDisabled(todoList.length === 1);
       return oldValues.filter(item => item !== value)
     })
-    setOpenDel(false);
   }
 
   const editDo = (item, isEdit) => {
@@ -86,14 +80,12 @@ function App() {
 
   const deleteAll = () => {
     setTodoList([]);
-    setDelBtnDisabled(true);
     setOpen(false);
-    setOpenDel(false);
   }
 
   const handleKeyDown = e => {
     if (e.key === 'Enter') {
-      addDo();
+      e.target.value !== "" && addDo();
     }
   }
 
@@ -108,14 +100,6 @@ function App() {
     }
   }
 
-  const [openColorSett, setOpenColorSett] = useState(false);
-  const [color, setColor] = useState({
-    r: "204",
-    g: "204",
-    b: "255",
-    a: "0"
-  });
-
   const colorSetting = () => {
     setOpenColorSett(!openColorSett);
   }
@@ -124,15 +108,11 @@ function App() {
     setOpenColorSett(false);
   };
 
-  const [containerColor, setContainerColor] = useState('#CCCCFF');
-
   const changeContainerColor = (color) => {
     const selectColor = color.hex;
     setContainerColor(selectColor);
     setColor({ ...color.rgb });
   }
-
-  const [cardFldVal, setCardFld] = useState('');
 
   const handleChange = (event) => {
     setCardFld(event.target.value);
@@ -196,7 +176,6 @@ function App() {
               <Tooltip title="Delete the cards">
                 <span>
                   <Button className='deleteAllStyle'
-                    disabled={isDelBtnDisabled}
                     onClick={handleClickOpen}
                     variant="contained" startIcon={<DeleteIcon />}>Delete All</Button>
                 </span>
@@ -251,14 +230,24 @@ function App() {
                         </Paper>
                         <Box className='iconBtnBox'
                         >
-                          <Tooltip title="Edit Note">
-                            <IconButton aria-label="edit" onClick={() => editDo(item, item.editing)} disabled={isEditBtnDisabled === index && item.complete}>
-                              <EditIcon style={{ fill: "blue" }} />
-                            </IconButton>
-                          </Tooltip>
+                          {item.editing ? (
+                            <>
+                              <Tooltip title="Save Note">
+                                <IconButton aria-label="edit" onClick={() => editDo(item, item.editing)} >
+                                  <SaveIcon style={{ fill: "blue" }} />
+                                </IconButton>
+                              </Tooltip>
+                            </>
+                          ) : (
+                            <Tooltip title="Edit Note">
+                              <IconButton aria-label="edit" onClick={() => editDo(item, item.editing)}>
+                                <EditIcon style={{ fill: "blue" }} />
+                              </IconButton>
+                            </Tooltip>
+                          )}
 
                           <Tooltip title="Done Note">
-                            <IconButton aria-label="edit" onClick={() => clickhandler(item, index)}>
+                            <IconButton aria-label="edit" onClick={() => clickHandler(item, index)}>
                               <DoneIcon style={{ fill: "green" }} />
                             </IconButton>
                           </Tooltip>
